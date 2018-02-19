@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Board;
 use AppBundle\Entity\User;
 use AppBundle\Form\UserPostType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -30,6 +31,7 @@ class UserController extends Controller
         return $this->serialize($users);
     }
 
+
     /**
      * @Route("/user/{id}", methods={"GET"}, requirements={"id": "\d+"})
      * @param $id
@@ -48,6 +50,7 @@ class UserController extends Controller
 
         return $this->serialize($user);
     }
+
 
     /**
      * @Route("/user", methods={"POST"})
@@ -71,12 +74,10 @@ class UserController extends Controller
 
         // UserPostType 으로 생성된 폼 default configure option 에 'data_class' = User Entity 로 되어있기 때문에
         // $form->getData 는 User 엔티티의 데이터가 리턴된다.
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($form->getData());
-        $em->flush();
-
-        return $this->serialize($form->getData());
+        $user = $this->get('app.service.user_service')->create($form->getData());
+        return $this->serialize($user);
     }
+
 
     /**
      * @Route("/user/{id}", methods={"PUT"}, requirements={"id": "\d+"})
@@ -100,31 +101,42 @@ class UserController extends Controller
         }
 
         // $user 에 id 가 존재하는경우 update 문이 실행된다.
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($user);
-        $em->flush();
-
-        return $this->serialize($form->getData());
+        $user = $this->get('app.service.user_service')->update($form->getData());
+        return $this->serialize($user);
     }
+
 
     /**
      * @Route("/user/{id}", methods={"DELETE"}, requirements={"id": "\d+"})
      * @param User $user
+     * @return JsonResponse
      */
     public function deleteAction(User $user)
     {
-        $em = $this->getDoctrine()->getManager();
-        $em->remove($user);
-        $em->flush();
+        $this->get('app.service.user_service')->delete($user);
+        return $this->serialize($user);
     }
+
 
     /**
      * @Route("/user/{id}/boards", methods={"GET"}, requirements={"id": "\d+"})
      * @param User $user
+     * @return JsonResponse
      */
     public function listBoardsAction(User $user)
     {
-        // TODO: 해당 User 로 작성한 게시판 데이터를 가져오기.
+        $boards = $this->getDoctrine()->getRepository(Board::class)
+            ->findBy(
+                ['user' => $user]
+            );
+
+        if (!$boards) {
+            throw $this->createNotFoundException(
+                'No boards found for user_id: ' . $user->getId()
+            );
+        }
+
+        return $this->serialize($boards);
     }
 
 
@@ -146,5 +158,5 @@ class UserController extends Controller
         );
     }
 
-
+    // TODO: 3. FOS 사용하기 +Object Manager 사용하기
 }

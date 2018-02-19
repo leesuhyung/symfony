@@ -31,9 +31,9 @@ class UserControllerTest extends WebTestCase
     public function testPostAction()
     {
         $params = array(
-            'name' => 'symfony',
-            'email' => 'symfony@test.com',
-            'password' => '123'
+            'name' => 'hash',
+            'email' => 'hash@test.com',
+            'password' => '123123'
         );
 
         $client = self::createClient();
@@ -59,6 +59,17 @@ class UserControllerTest extends WebTestCase
         $client = self::createClient();
         $client->request('PUT', '/user/22', $params);
 //        $client->request('PUT', '/user/22', array(), array(), array(), json_encode($params));
+
+        $response = $client->getResponse();
+
+        var_dump(json_decode($response->getContent()));
+    }
+
+    public function testListBoardsAction()
+    {
+        $client = self::createClient();
+
+        $client->request('GET', '/user/4/boards');
 
         $response = $client->getResponse();
 

@@ -4,9 +4,22 @@ parameters:
 #    parameter_name: value
 
 services:
-#    service_name:
-#        class: AppBundle\Directory\ClassName
-#        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
-  app.message_generator:
+  #    service_name:
+  #        class: AppBundle\Directory\ClassName
+  #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+  app.service.message_generator:
     class: AppBundle\Service\MessageGenerator
     arguments: ['@logger']
+
+  app.service.user_service:
+    class: AppBundle\Service\UserService
+    arguments: ['@doctrine.orm.default_entity_manager']
+
+  # ------------------
+  #  event subscriber
+  # ------------------
+  app.event_subscriber:
+    class: AppBundle\EventSubscriber\HashPasswordSubscriber
+    autowire: true
+    tags:
+        - { name: doctrine.event_subscriber }

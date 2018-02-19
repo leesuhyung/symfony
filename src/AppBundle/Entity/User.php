@@ -2,15 +2,17 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * User
  *
  * @ORM\Table(name="user", uniqueConstraints={@ORM\UniqueConstraint(name="email_UNIQUE", columns={"email"})})
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="UserRepository")
  */
-class User
+class User implements UserInterface
 {
     /**
      * @var string
@@ -180,6 +182,25 @@ class User
         $this->id = $id;
     }
 
+    public function getRoles()
+    {
+        // TODO: Implement getRoles() method.
+    }
 
+    public function getSalt()
+    {
+        // 패스워드가 salt 를 사용해 인코드 하고 있지 않는 경우에는 null 리턴이 가능하다.
+        return null;
+    }
+
+    public function getUsername()
+    {
+        return $this->email;
+    }
+
+    public function eraseCredentials()
+    {
+        // TODO: Implement eraseCredentials() method.
+    }
 }
 
