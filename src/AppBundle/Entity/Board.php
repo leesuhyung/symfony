@@ -3,19 +3,26 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
+use AppBundle\Validator\Constraints as Constraints;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Board
  *
  * @ORM\Table(name="board", indexes={@ORM\Index(name="fk_board_user_idx", columns={"user_id"})})
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="BoardRepository")
+ * @Constraints\BoardConstraint
  */
 class Board
 {
+    const BOARD_VALIDATOR = '제목이나 내용';
+
     /**
      * @var string
      *
      * @ORM\Column(name="entity", type="string", length=45, nullable=false)
+     * @Serializer\Groups({"list", "detail"})
      */
     private $entity = 'info';
 
@@ -23,6 +30,8 @@ class Board
      * @var string
      *
      * @ORM\Column(name="title", type="string", length=255, nullable=false)
+     * @Serializer\Groups({"list", "detail"})
+     * @Assert\Length(min=5, minMessage="제목은 최소 5자 이상 입력해주세요.")
      */
     private $title;
 
@@ -30,6 +39,8 @@ class Board
      * @var string
      *
      * @ORM\Column(name="contents", type="text", length=65535, nullable=false)
+     * @Serializer\Groups({"list", "detail"})
+     * @Assert\Length(min=10, minMessage="내용은 최소 10자 이상 입력해주세요.")
      */
     private $contents;
 
@@ -37,6 +48,7 @@ class Board
      * @var \DateTime
      *
      * @ORM\Column(name="created_at", type="datetime", nullable=true)
+     * @Serializer\Groups({"list", "detail"})
      */
     private $createdAt;
 
@@ -53,15 +65,26 @@ class Board
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @Serializer\Groups({"list", "detail"})
      */
     private $id;
 
     /**
      * @var \AppBundle\Entity\User
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="boards")
+     * @Serializer\Groups({"list", "detail"})
      */
     private $user;
+
+    /**
+     * Board constructor.
+     */
+    public function __construct()
+    {
+        $this->createdAt = new \DateTime();
+    }
+
 
     /**
      * @return string

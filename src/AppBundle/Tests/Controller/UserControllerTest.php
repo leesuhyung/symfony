@@ -21,7 +21,7 @@ class UserControllerTest extends WebTestCase
     {
         $client = self::createClient();
 
-        $client->request('GET', '/user/1');
+        $client->request('GET', '/api/users/4');
 
         $response = $client->getResponse();
 

@@ -1,3 +1,4 @@
-app:
+api:
     resource: "@AppBundle/Controller/"
-    type:     annotation
+    type:     rest
+    prefix:   /api

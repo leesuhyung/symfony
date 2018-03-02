@@ -14,7 +14,8 @@ class HashPasswordSubscriber implements EventSubscriber
     public function getSubscribedEvents()
     {
         return array(
-            'prePersist'
+            'prePersist',
+            'preUpdate',
         );
     }
 
@@ -29,6 +30,17 @@ class HashPasswordSubscriber implements EventSubscriber
 
         if ($entity instanceof User) {
             $this->encodePassword($entity);
+        }
+    }
+
+    public function preUpdate(LifecycleEventArgs $args)
+    {
+        $entity = $args->getEntity();
+        if ($entity instanceof User) {
+            $this->encodePassword($entity);
+            $em = $args->getEntityManager();
+            $meta = $em->getClassMetadata(get_class($entity));
+            $em->getUnitOfWork()->recomputeSingleEntityChangeSet($meta, $entity);
         }
     }
 

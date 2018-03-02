@@ -4,22 +4,48 @@ parameters:
 #    parameter_name: value
 
 services:
-  #    service_name:
-  #        class: AppBundle\Directory\ClassName
-  #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
-  app.service.message_generator:
-    class: AppBundle\Service\MessageGenerator
-    arguments: ['@logger']
+    #    service_name:
+    #        class: AppBundle\Directory\ClassName
+    #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+    app.service.message_generator:
+        class: AppBundle\Service\MessageGenerator
+        arguments: ['@logger']
 
-  app.service.user_service:
-    class: AppBundle\Service\UserService
-    arguments: ['@doctrine.orm.default_entity_manager']
+    app.service.user_service:
+        class: AppBundle\Service\UserService
+        arguments: ['@doctrine.orm.default_entity_manager']
 
-  # ------------------
-  #  event subscriber
-  # ------------------
-  app.event_subscriber:
-    class: AppBundle\EventSubscriber\HashPasswordSubscriber
-    autowire: true
-    tags:
-        - { name: doctrine.event_subscriber }
+    app.service.board_service:
+            class: AppBundle\Service\BoardService
+            arguments: ['@doctrine.orm.default_entity_manager']
+
+    # ------------------
+    #  validator
+    # ------------------
+    app.board_constraint_validator:
+        class: AppBundle\Validator\BoardConstraintValidator
+        arguments: ['@doctrine.orm.default_entity_manager']
+        tags:
+            - { name: validator.constraint_validator }
+
+    # ------------------
+    #  services
+    # ------------------
+    jwt_token_authenticator:
+        class: AppBundle\Security\JwtTokenAuthenticator
+        arguments: ['@lexik_jwt_authentication.jwt_encoder', '@doctrine.orm.default_entity_manager']
+
+    app.owner_voter:
+        class: AppBundle\Security\OwnerVoter
+        public: false
+        tags:
+            - { name: security.voter }
+
+    # ------------------
+    #  event subscriber
+    # ------------------
+    app.event_subscriber:
+        class: AppBundle\EventSubscriber\HashPasswordSubscriber
+        autowire: true
+        tags:
+            - { name: doctrine.event_subscriber }

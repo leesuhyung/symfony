@@ -8,13 +8,17 @@ security:
             memory: ~
 
     encoders:
-            AppBundle\Entity\User: bcrypt
+        AppBundle\Entity\User: bcrypt
 
     firewalls:
-        # disables authentication for assets and the profiler, adapt it according to your needs
-        dev:
-            pattern: ^/(_(profiler|wdt)|css|images|js)/
-            security: false
+        api:
+            # /api 모든 요청에 대해 가드가 작동한다.
+            pattern: ^/api
+            stateless: true
+            guard:
+                authenticators:
+                    - jwt_token_authenticator
+            anonymous: true
 
         main:
             anonymous: ~
@@ -25,3 +29,6 @@ security:
 
             # form_login: ~
             # http://symfony.com/doc/current/cookbook/security/form_login_setup.html
+
+#    access_control:
+#        - { path: ^/api, roles: ROLE_USER }

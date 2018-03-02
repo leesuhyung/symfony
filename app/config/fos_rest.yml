@@ -1,3 +1,16 @@
 fos_rest:
-    service:
-        serializer: fos_rest.serializer.symfony
+    param_fetcher_listener:
+        enabled: true
+        force: true
+    format_listener: true
+    view:
+        formats:
+            json: true
+        force_redirects:
+            json: false
+        failed_validation: HTTP_BAD_REQUEST
+    serializer:
+        serialize_null: true
+    routing_loader:
+        default_format: json
+        include_format: false

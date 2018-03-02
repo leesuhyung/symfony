@@ -4,7 +4,9 @@ namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * User
@@ -16,8 +18,10 @@ class User implements UserInterface
 {
     /**
      * @var string
-     *
      * @ORM\Column(name="name", type="string", length=255, nullable=false)
+     * @Serializer\Groups({"list", "detail"})
+     * @Assert\NotBlank()
+     * @Assert\Regex("/^[a-zA-Z0-9가-힣_]{1,10}$/u", message="이름은 10자 이하의 영문, 숫자, 한글, 언더바까지 가능합니다.")
      */
     private $name;
 
@@ -25,6 +29,7 @@ class User implements UserInterface
      * @var string
      *
      * @ORM\Column(name="email", type="string", length=255, nullable=false)
+     * @Serializer\Groups({"list", "detail"})
      */
     private $email;
 
@@ -46,6 +51,7 @@ class User implements UserInterface
      * @var \DateTime
      *
      * @ORM\Column(name="created_at", type="datetime", nullable=true)
+     * @Serializer\Groups({"list", "detail"})
      */
     private $createdAt;
 
@@ -62,12 +68,21 @@ class User implements UserInterface
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @Serializer\Groups({"list", "detail"})
      */
     private $id;
+
+    /**
+     * @var ArrayCollection
+     * @Serializer\Groups({"User_Board"})
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Board", mappedBy="user")
+     */
+    private $boards;
 
     public function __construct()
     {
         $this->createdAt = new \DateTime();
+        $this->boards = new ArrayCollection();
     }
 
     /**
@@ -184,7 +199,7 @@ class User implements UserInterface
 
     public function getRoles()
     {
-        // TODO: Implement getRoles() method.
+        return ['ROLE_USER'];
     }
 
     public function getSalt()
@@ -202,5 +217,14 @@ class User implements UserInterface
     {
         // TODO: Implement eraseCredentials() method.
     }
+
+    /**
+     * @return Board[]|ArrayCollection
+     */
+    public function getBoards()
+    {
+        return $this->boards;
+    }
+
 }
 
