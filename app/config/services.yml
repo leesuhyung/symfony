@@ -42,6 +42,15 @@ services:
             - { name: security.voter }
 
     # ------------------
+    #  event listener
+    # ------------------
+    app.get_date_listener:
+        class: AppBundle\EventListener\GetDateListener
+        arguments: ['@logger']
+        tags:
+            - { name: doctrine.event_listener, event: postLoad, connection: default }
+
+    # ------------------
     #  event subscriber
     # ------------------
     app.event_subscriber:

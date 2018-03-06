@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * Board
  *
  * @ORM\Table(name="board", indexes={@ORM\Index(name="fk_board_user_idx", columns={"user_id"})})
- * @ORM\Entity(repositoryClass="BoardRepository")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\BoardRepository")
  * @Constraints\BoardConstraint
  */
 class Board

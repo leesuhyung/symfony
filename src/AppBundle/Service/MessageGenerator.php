@@ -15,6 +15,8 @@ class MessageGenerator
 
     public function getHappyMessage()
     {
-        $this->logger->info('About to find a happy message!');
+        $date = new \DateTime();
+        $date = $date->format('Y-m-d H:i:s');
+        $this->logger->info('GetDate is '. $date);
     }
 }
