@@ -11,73 +11,73 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * User
  *
+ * @Serializer\ExclusionPolicy("all")
  * @ORM\Table(name="user", uniqueConstraints={@ORM\UniqueConstraint(name="email_UNIQUE", columns={"email"})})
- * @ORM\Entity(repositoryClass="UserRepository")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\UserRepository")
  */
 class User implements UserInterface
 {
     /**
-     * @var string
      * @ORM\Column(name="name", type="string", length=255, nullable=false)
      * @Serializer\Groups({"list", "detail"})
+     * @Serializer\Expose()
      * @Assert\NotBlank()
      * @Assert\Regex("/^[a-zA-Z0-9가-힣_]{1,10}$/u", message="이름은 10자 이하의 영문, 숫자, 한글, 언더바까지 가능합니다.")
      */
     private $name;
 
     /**
-     * @var string
-     *
      * @ORM\Column(name="email", type="string", length=255, nullable=false)
      * @Serializer\Groups({"list", "detail"})
+     * @Serializer\Expose()
      */
     private $email;
 
     /**
-     * @var string
-     *
      * @ORM\Column(name="password", type="string", length=255, nullable=true)
      */
     private $password;
 
     /**
-     * @var string
-     *
      * @ORM\Column(name="remember_token", type="string", length=100, nullable=true)
      */
     private $rememberToken;
 
     /**
-     * @var \DateTime
-     *
      * @ORM\Column(name="created_at", type="datetime", nullable=true)
      * @Serializer\Groups({"list", "detail"})
+     * @Serializer\Expose()
      */
     private $createdAt;
 
     /**
-     * @var \DateTime
-     *
      * @ORM\Column(name="updated_at", type="datetime", nullable=true)
      */
     private $updatedAt;
 
     /**
-     * @var integer
-     *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @Serializer\Groups({"list", "detail"})
+     * @Serializer\Expose()
      */
     private $id;
 
     /**
      * @var ArrayCollection
      * @Serializer\Groups({"User_Board"})
+     * @Serializer\Expose()
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Board", mappedBy="user")
      */
     private $boards;
+
+    /**
+     * @Serializer\Groups({"list", "detail"})
+     * @Serializer\Expose()
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Role")
+     */
+    private $role;
 
     public function __construct()
     {
@@ -226,5 +226,14 @@ class User implements UserInterface
         return $this->boards;
     }
 
+    public function getRole()
+    {
+        return $this->role;
+    }
+
+    public function setRole(Role $role)
+    {
+        $this->role = $role;
+    }
 }
 

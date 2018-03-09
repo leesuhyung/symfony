@@ -4,14 +4,11 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Board;
 use AppBundle\Form\BoardPostType;
-use AppBundle\Pagination\PaginatedCollection;
 use AppBundle\Security\OwnerVoter;
 use FOS\RestBundle\Context\Context;
 use FOS\RestBundle\Controller\Annotations\QueryParam;
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Request\ParamFetcher;
-use Pagerfanta\Adapter\DoctrineORMAdapter;
-use Pagerfanta\Pagerfanta;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,45 +27,11 @@ class BoardController extends FOSRestController
         $page = $paramFetcher->get('page');
         $limit = $paramFetcher->get('limit');
 
-        $boards = $this->getDoctrine()->getRepository(Board::class)
+        $query = $this->getDoctrine()->getRepository(Board::class)
             ->getFindAll($paramFetcher->all());
 
-        // TODO: Paginate 클래스를 만들어서 서비스에 등록하고 거기서 가져오게끔 변경하기.
-
-        $pagerfanta = new Pagerfanta(new DoctrineORMAdapter($boards));
-        $pagerfanta->setMaxPerPage($limit);
-        $pagerfanta->setCurrentPage($page);
-
-        $items = [];
-        foreach ($pagerfanta->getCurrentPageResults() as $result) {
-            $items[] = $result;
-        }
-
-        $route = 'get_boards';
-        $routeParams = $paramFetcher->all();
-        $createLinkUrl = function ($targetPage) use ($route, $routeParams) {
-            /**
-             * generateUrl() : 지정된 파라미터로 url 생성.
-             *                 e.g. /api/boards?page=[2 == $targetPage]&[params == $routeParams]
-             */
-            return $this->generateUrl($route, array_merge(
-                $routeParams,
-                ['page' => $targetPage]
-            ));
-        };
-
-        $paginatedCollection = new PaginatedCollection($items, $pagerfanta->getNbResults());
-        $paginatedCollection->addLink('self', $createLinkUrl($page));
-        $paginatedCollection->addLink('first', $createLinkUrl(1));
-        $paginatedCollection->addLink('last', $createLinkUrl($pagerfanta->getNbPages()));
-
-        if ($pagerfanta->hasNextPage()) {
-            $paginatedCollection->addLink('next', $createLinkUrl($pagerfanta->getNextPage()));
-        }
-
-        if ($pagerfanta->hasPreviousPage()) {
-            $paginatedCollection->addLink('prev', $createLinkUrl($pagerfanta->getPreviousPage()));
-        }
+        $paginatedCollection = $this->get('pagination_factory')->createCollection($query, $limit, $page,
+            'get_boards', $paramFetcher->all());
 
         $view = $this->view($paginatedCollection, 200);
         $context = new Context();

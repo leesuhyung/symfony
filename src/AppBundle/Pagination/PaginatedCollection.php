@@ -33,20 +33,43 @@ class PaginatedCollection
      */
     private $_links = [];
 
-    /**
-     * PaginatedCollection constructor.
-     * @param array $items
-     * @param $totalItems
-     */
-    public function __construct(array $items, $totalItems)
-    {
-        $this->items = $items;
-        $this->total = $totalItems;
-        $this->count = count($items);
-    }
-
     public function addLink($ref, $url)
     {
         $this->_links[$ref] = $url;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getItems()
+    {
+        return $this->items;
+    }
+
+    /**
+     * @param mixed $items
+     */
+    public function setItems(array $items)
+    {
+        $this->items = $items;
+        $this->count = count($items);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTotal()
+    {
+        return $this->total;
+    }
+
+    /**
+     * @param mixed $total
+     */
+    public function setTotal($total)
+    {
+        $this->total = $total;
+    }
+
+
 }

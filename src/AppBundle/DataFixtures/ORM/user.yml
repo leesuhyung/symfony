@@ -1,0 +1,8 @@
+AppBundle\Entity\User:
+    user_{1..10}:
+        email: "<email()>"
+        name: "<ko_KR:name()>"
+        password: "123123"
+        createdAt: "<datetime()>"
+        role: "@role_*"
+        # TODO: why not work?

@@ -19,16 +19,12 @@ class Board
     const BOARD_VALIDATOR = '제목이나 내용';
 
     /**
-     * @var string
-     *
      * @ORM\Column(name="entity", type="string", length=45, nullable=false)
      * @Serializer\Groups({"list", "detail"})
      */
     private $entity = 'info';
 
     /**
-     * @var string
-     *
      * @ORM\Column(name="title", type="string", length=255, nullable=false)
      * @Serializer\Groups({"list", "detail"})
      * @Assert\Length(min=5, minMessage="제목은 최소 5자 이상 입력해주세요.")
@@ -36,8 +32,6 @@ class Board
     private $title;
 
     /**
-     * @var string
-     *
      * @ORM\Column(name="contents", type="text", length=65535, nullable=false)
      * @Serializer\Groups({"list", "detail"})
      * @Assert\Length(min=10, minMessage="내용은 최소 10자 이상 입력해주세요.")
@@ -45,23 +39,17 @@ class Board
     private $contents;
 
     /**
-     * @var \DateTime
-     *
      * @ORM\Column(name="created_at", type="datetime", nullable=true)
      * @Serializer\Groups({"list", "detail"})
      */
     private $createdAt;
 
     /**
-     * @var \DateTime
-     *
      * @ORM\Column(name="updated_at", type="datetime", nullable=true)
      */
     private $updatedAt;
 
     /**
-     * @var integer
-     *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")

@@ -41,6 +41,10 @@ services:
         tags:
             - { name: security.voter }
 
+    pagination_factory:
+        class: AppBundle\Pagination\PaginationFactory
+        arguments: ['@router']
+
     # ------------------
     #  event listener
     # ------------------
@@ -58,3 +62,8 @@ services:
         autowire: true
         tags:
             - { name: doctrine.event_subscriber }
+
+    app.event_subscriber.board_serializer_subscriber:
+        class: AppBundle\EventSubscriber\BoardSerializerSubscriber
+        tags:
+            - { name: jms_serializer.event_subscriber }

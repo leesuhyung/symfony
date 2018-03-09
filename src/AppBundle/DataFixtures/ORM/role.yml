@@ -1,0 +1,3 @@
+AppBundle\Entity\Role:
+    role_{1..4}:
+        name: <role($fake('current'))>
